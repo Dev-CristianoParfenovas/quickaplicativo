@@ -96,12 +96,11 @@ const SignIn = () => {
               <Input
                 title="Digite sua senha"
                 keyboardType="default"
-                IconLeft={Octicons}
-                IconLeftName={hidePass ? "eye-closed" : "eye"}
+                IconLeft={Ionicons}
                 secureTextEntry={hidePass}
+                IconLeftName={hidePass ? "eye-off" : "eye"}
                 onIconLeftPress={() => setHidePass(!hidePass)}
                 style={[
-                  styles.input,
                   {
                     borderWidth: errors.email && 1,
                     borderColor: errors.email && "#ff375b",

@@ -8,7 +8,7 @@ export const style = StyleSheet.create({
     borderRadius: 40,
   },
   boxInput: {
-    width: "100%",
+    width: 350,
     height: 50,
     borderWidth: 1,
     borderRadius: 40,
@@ -18,9 +18,12 @@ export const style = StyleSheet.create({
     marginBottom: 18,
     flexDirection: "row",
     alignItems: "center",
-    justifyContent: "space-around",
+    justifyContent: "flex-start",
     paddingHorizontal: 20,
-    paddingLeft: 10,
+    paddingLeft: 5,
+  },
+  button: {
+    width: "10%",
   },
   inputContainer: {
     width: "100%",

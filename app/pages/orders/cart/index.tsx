@@ -25,7 +25,7 @@ export default function CartItens() {
             marginRight: 10, // Espaço entre o texto e o ícone
           }}
         >
-          finalizar a compra
+          Finalizar a compra
         </Text>
         <Ionicons name="checkmark-circle-outline" size={24} color="white" />
       </TouchableOpacity>

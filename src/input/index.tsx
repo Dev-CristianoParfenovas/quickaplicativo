@@ -38,7 +38,6 @@ type Props = TextInputProps & {
   IconLeftName?: string;
   IconRightName?: string;
   title?: string;
-  keyBoardTipo?: string;
   onIconLeftPress?: () => void;
   onIconRightPress?: () => void;
 };
@@ -58,7 +57,6 @@ const Input = forwardRef((Props: Props, ref: LegacyRef<TextInput> | null) => {
     IconLeftName,
     IconRightName,
     title,
-    keyBoardTipo,
     onIconLeftPress,
     onIconRightPress,
     ...rest
@@ -76,7 +74,7 @@ const Input = forwardRef((Props: Props, ref: LegacyRef<TextInput> | null) => {
 
   const calculateSizePaddingLeft = () => {
     if (IconLeft && IconRight) {
-      return 5;
+      return 0;
     } else if (IconLeft || IconRight) {
       return 10;
     } else {
@@ -90,22 +88,22 @@ const Input = forwardRef((Props: Props, ref: LegacyRef<TextInput> | null) => {
         style={[style.boxInput, { paddingLeft: calculateSizePaddingLeft() }]}
       >
         {IconLeft && IconLeftName && (
-          <TouchableOpacity onPress={onIconLeftPress}>
+          <TouchableOpacity onPress={onIconLeftPress} style={style.button}>
             <IconLeft name={IconLeftName as any} size={20} color="#6b7280" />
-          </TouchableOpacity>
-        )}
-
-        {IconRight && IconRightName && (
-          <TouchableOpacity onPress={onIconRightPress}>
-            <IconRight name={IconRightName as any} size={20} color="#6b7280" />
           </TouchableOpacity>
         )}
 
         <TextInput
           style={[style.input, { width: calculateSizeWidth() }]}
           placeholder={title}
-          //{...rest}
+          {...rest}
         />
+
+        {IconRight && IconRightName && (
+          <TouchableOpacity onPress={onIconRightPress} style={style.button}>
+            <IconRight name={IconRightName as any} size={20} color="#6b7280" />
+          </TouchableOpacity>
+        )}
       </View>
     </Fragment>
   );
