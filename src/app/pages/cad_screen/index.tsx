@@ -12,6 +12,9 @@ import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view
 import { useForm, Controller } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
+import { Picker } from "@react-native-picker/picker";
+import { Ionicons, MaterialIcons } from "@expo/vector-icons";
+import Input from "@/src/input";
 
 const schema = yup.object({
   username: yup.string().required("Informe seu nome!!"),
@@ -22,7 +25,15 @@ const schema = yup.object({
     .required("Informe sua senha!!"),
 });
 
+type TipoEmpresaProps = {
+  id: string;
+  name: string;
+};
+
 const CadScreen = () => {
+  const [tipoEmpresa, setTipoEmpresa] = useState<TipoEmpresaProps[] | []>([]);
+  // const [empresaSelected, setEmpresaSelected] = useState<TipoEmpresaProps>();
+  const [hidePass, setHidePass] = useState(true);
   const router = useRouter();
 
   const {
@@ -34,39 +45,54 @@ const CadScreen = () => {
   });
 
   function handleNavigate() {
-    router.push("/pages/products/products_screen");
+    router.push("../../(drawer)/screens");
   }
 
   function handleSignIn(data: any) {
-    console.log(data);
     handleNavigate();
+    console.log(data);
   }
 
   const navigation = useNavigation<any>(); // Use any para evitar problemas de tipo
 
   return (
-    <View className="flex-1 justify-start items-center p-5 mt-15 bg-gray-100">
+    <View className="flex-1 justify-start items-center p-5 mt-18 bg-gray-100">
       <View className="w-full justify-center items-center">
-        <Text className="mt-16 p-2 text-3xl">Cadastre-se aqui</Text>
+        <Text className="mt-12 p-2 text-3xl">Cadastre-se aqui</Text>
       </View>
       <KeyboardAwareScrollView
         contentContainerStyle={styles.container}
         showsVerticalScrollIndicator={false}
       >
+        <Text style={styles.label}>Tipo de Empresa:</Text>
+        <View style={styles.pickerContainer}>
+          <Picker
+            selectedValue={tipoEmpresa}
+            style={styles.picker}
+            onValueChange={(itemValue) => setTipoEmpresa(itemValue)}
+          >
+            <Picker.Item label="Selecione o tipo de empresa" value="" />
+            <Picker.Item label="E-commerce" value="ecommerce" />
+            <Picker.Item label="Serviços" value="servicos" />
+          </Picker>
+        </View>
+
         <Controller //NOME
           control={control}
           name="username"
           render={({ field: { onChange, onBlur, value } }) => (
-            <TextInput
-              className="w-full mb-5 border border-gray-300 p-4 rounded-3xl bg-white"
-              style={[
+            <Input
+              title="Nome/Razão social"
+              keyboardType="default"
+              IconLeft={MaterialIcons}
+              IconLeftName="people"
+              /* style={[
                 styles.input,
                 {
-                  borderWidth: errors.username && 1,
-                  borderColor: errors.username && "#ff375b",
+                  borderWidth: errors.email && 1,
+                  borderColor: errors.email && "#ff375b",
                 },
-              ]}
-              placeholder="Nome"
+              ]}*/
               onBlur={onBlur} //chamado qdo. o textinput é focado
               value={value}
               onChangeText={onChange}
@@ -81,17 +107,18 @@ const CadScreen = () => {
           control={control}
           name="email"
           render={({ field: { onChange, onBlur, value } }) => (
-            <TextInput
-              className="w-full mb-5 border border-gray-300 p-4 rounded-3xl bg-white"
+            <Input
+              title="Digite seu email"
               keyboardType="email-address"
-              style={[
-                styles.input,
+              IconLeft={MaterialIcons}
+              IconLeftName="email"
+              /*style={[
+                //  styles.input,
                 {
                   borderWidth: errors.email && 1,
                   borderColor: errors.email && "#ff375b",
                 },
-              ]}
-              placeholder="Digite seu email"
+              ]}*/
               onBlur={onBlur} //chamado qdo. o textinput é focado
               value={value}
               onChangeText={onChange}
@@ -106,19 +133,20 @@ const CadScreen = () => {
           control={control}
           name="password"
           render={({ field: { onChange, onBlur, value } }) => (
-            <TextInput
-              className="w-full mb-5 border border-gray-300 p-4 rounded-3xl bg-white"
-              style={[
-                styles.input,
+            <Input
+              title="Digite sua senha"
+              keyboardType="default"
+              IconLeft={Ionicons}
+              secureTextEntry={hidePass}
+              IconLeftName={hidePass ? "eye-off" : "eye"}
+              onIconLeftPress={() => setHidePass(!hidePass)}
+              /* style={[
+                // styles.input,
                 {
-                  borderWidth: errors.password && 1,
-                  borderColor: errors.password && "#ff375b",
+                  borderWidth: errors.email && 1,
+                  borderColor: errors.email && "#ff375b",
                 },
-              ]}
-              placeholder="Digite sua senha"
-              secureTextEntry={true}
-              keyboardType="default" // Permite números e letras
-              autoCapitalize="none"
+              ]}*/
               onBlur={onBlur} //chamado qdo. o textinput é focado
               value={value}
               onChangeText={onChange}
@@ -147,12 +175,24 @@ const styles = StyleSheet.create({
     flexGrow: 1,
     justifyContent: "center",
   },
+
+  pickerContainer: {
+    borderWidth: 1,
+    borderColor: "#ccc",
+    borderRadius: 10, // Arredondar as bordas
+    marginBottom: 16,
+    overflow: "hidden", // Garantir que o conteúdo dentro respeite as bordas arredondadas
+    width: "100%",
+    height: 56,
+  },
   input: {
-    height: 57,
+    height: 52,
+    //width: "100%",
+    borderRadius: 40,
   },
   button: {
     backgroundColor: "#60a5fa",
-    borderRadius: 16,
+    borderRadius: 30,
     elevation: 3,
     alignItems: "center",
     justifyContent: "center",
@@ -161,9 +201,21 @@ const styles = StyleSheet.create({
     width: 350,
   },
   labelError: {
+    height: 52,
+    width: "100%",
     alignSelf: "flex-start",
     color: "#ff375b",
     marginBottom: 8,
+  },
+  picker: {
+    height: 50,
+    marginBottom: 7,
+    backgroundColor: "#e5e7eb",
+  },
+  label: {
+    fontSize: 16,
+    marginBottom: 8,
+    marginLeft: 10,
   },
 });
 

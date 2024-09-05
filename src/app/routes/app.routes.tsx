@@ -1,11 +1,11 @@
 import React from "react";
 import { View } from "react-native";
-import ProductScreen from "../pages/products/products_screen";
+import Screen_Home from "../(drawer)/screens";
 
 function AppRoutes() {
   return (
     <View className="flex-1">
-      <ProductScreen />
+      <Screen_Home />
     </View>
   );
 }

@@ -36,7 +36,7 @@ const SignIn = () => {
   });
 
   function handleNavigate() {
-    router.push("/pages/products/products_screen");
+    router.push("../../(drawer)/screens");
   }
 
   function handleNavigateCad() {
@@ -72,13 +72,12 @@ const SignIn = () => {
                 keyboardType="email-address"
                 IconLeft={MaterialIcons}
                 IconLeftName="email"
-                style={[
-                  styles.input,
+                /* style={[
                   {
                     borderWidth: errors.email && 1,
                     borderColor: errors.email && "#ff375b",
                   },
-                ]}
+                ]}*/
                 onBlur={onBlur} //chamado qdo. o textinput é focado
                 value={value}
                 onChangeText={onChange}
@@ -100,12 +99,13 @@ const SignIn = () => {
                 secureTextEntry={hidePass}
                 IconLeftName={hidePass ? "eye-off" : "eye"}
                 onIconLeftPress={() => setHidePass(!hidePass)}
-                style={[
+                /* style={[
+                  styles.input,
                   {
                     borderWidth: errors.email && 1,
                     borderColor: errors.email && "#ff375b",
                   },
-                ]}
+                ]}*/
                 onBlur={onBlur} //chamado qdo. o textinput é focado
                 value={value}
                 onChangeText={onChange}
@@ -173,11 +173,11 @@ const styles = StyleSheet.create({
     marginBottom: 15,
   },
   input: {
-    height: 57,
+    height: 52,
   },
   button: {
     backgroundColor: "#60a5fa",
-    borderRadius: 16,
+    borderRadius: 40,
     elevation: 3,
     alignItems: "center",
     justifyContent: "center",
@@ -190,7 +190,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#FFF",
     borderColor: "#60a5fa",
     borderWidth: 1,
-    borderRadius: 16,
+    borderRadius: 30,
     elevation: 3,
     alignItems: "center",
     justifyContent: "center",

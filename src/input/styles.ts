@@ -9,7 +9,7 @@ export const style = StyleSheet.create({
   },
   boxInput: {
     width: 350,
-    height: 50,
+    height: 52,
     borderWidth: 1,
     borderRadius: 40,
     borderColor: "#d1d5db",

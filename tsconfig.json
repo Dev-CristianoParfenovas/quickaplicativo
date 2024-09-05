@@ -1,6 +1,9 @@
 {
   "extends": "expo/tsconfig.base",
   "compilerOptions": {
+    "jsx": "react-native", // ou "react" se for um projeto web com React
+    "allowJs": true,        // Permitir o uso de arquivos .js
+    "noEmit": true,  
     "strict": true,
     "paths": {
       "@/*": [

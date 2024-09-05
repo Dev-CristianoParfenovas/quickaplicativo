@@ -1,4 +1,5 @@
-import "../src/styles/global.css";
+import "../../src/styles/global.css";
+
 import { Stack } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
 import { router } from "expo-router";
@@ -22,25 +23,6 @@ export default function RootLayout() {
       <Stack.Screen name="index" options={{ title: "" }} />
 
       <Stack.Screen
-        name="pages/products/products_screen/index"
-        options={{
-          title: "Produtos",
-          headerRight: () => (
-            <Ionicons
-              name="cart-sharp"
-              size={24}
-              color="black"
-              style={{ marginRight: 5, marginTop: 3 }} // Ajuste a margem se necessário
-              onPress={() => {
-                // Ação ao clicar no ícone do carrinho
-                handleNavigateCart();
-              }}
-            />
-          ),
-        }}
-      />
-
-      <Stack.Screen
         name="pages/products/products_detail_screen/[id]"
         options={{ title: "Detalhe do produto" }}
       />
@@ -58,13 +40,13 @@ export default function RootLayout() {
               size={24}
               color="white"
               style={{ marginLeft: 10 }}
-              onPress={() =>
-                navigation.navigate("pages/products/products_screen/index")
-              } // Navega para a tela de produtos
+              onPress={() => navigation.navigate("product_service_screen")} // Navega para a tela de produtos
             />
           ),
         })}
       />
+
+      <Stack.Screen name="(drawer)" options={{ headerShown: false }} />
     </Stack>
   );
 }

@@ -5,7 +5,7 @@ import {
   TextInputProps,
   TouchableOpacity,
 } from "react-native";
-import { useForm, Controller } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 import {
@@ -76,7 +76,7 @@ const Input = forwardRef((Props: Props, ref: LegacyRef<TextInput> | null) => {
     if (IconLeft && IconRight) {
       return 0;
     } else if (IconLeft || IconRight) {
-      return 10;
+      return 8;
     } else {
       return 20;
     }
