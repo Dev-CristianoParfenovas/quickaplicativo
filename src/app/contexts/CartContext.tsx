@@ -7,9 +7,17 @@ type Product = {
   image: string;
 };
 
+type CartItem = {
+  product: Product;
+
+  quantity: number;
+
+  totalPrice: number;
+};
+
 type CartContextType = {
-  cart: Product[];
-  addToCart: (product: Product) => void;
+  cart: CartItem[];
+  addToCart: (product: Product, quantity: number, totalPrice: number) => void;
 };
 
 const CartContext = createContext<CartContextType | undefined>(undefined);
@@ -22,11 +30,34 @@ export const useCart = () => {
   return context;
 };
 
-export const CartProvider = ({ children }: { children: ReactNode }) => {
-  const [cart, setCart] = useState<Product[]>([]);
+export const CartProvider: React.FC<{ children: ReactNode }> = ({
+  children,
+}) => {
+  const [cart, setCart] = useState<CartItem[]>([]);
 
-  const addToCart = (product: Product) => {
-    setCart((prevCart) => [...prevCart, product]);
+  const addToCart = (
+    product: Product,
+    quantity: number,
+    totalPrice: number
+  ) => {
+    setCart((prevCart) => {
+      const existingItem = prevCart.find(
+        (item) => item.product.id === product.id
+      );
+      if (existingItem) {
+        return prevCart.map((item) =>
+          item.product.id === product.id
+            ? {
+                ...item,
+                quantity: item.quantity + quantity,
+                totalPrice: item.totalPrice + totalPrice,
+              }
+            : item
+        );
+      } else {
+        return [...prevCart, { product, quantity, totalPrice }];
+      }
+    });
   };
 
   return (

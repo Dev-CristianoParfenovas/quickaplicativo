@@ -5,6 +5,7 @@ import { Stack } from "expo-router";
 import CartProvider from "./contexts/CartContext";
 
 export default function App() {
+  console.log("Debugging component");
   return (
     <View className="flex-1">
       <CartProvider>

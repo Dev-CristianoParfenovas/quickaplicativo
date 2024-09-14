@@ -1,16 +1,9 @@
 import React, { useState } from "react";
-import {
-  View,
-  Text,
-  Image,
-  ScrollView,
-  TouchableOpacity,
-  StyleSheet,
-} from "react-native";
-import { useLocalSearchParams } from "expo-router"; // Usar 'useSearchParams' conforme indicado
+import { View, Text, Image, TouchableOpacity, StyleSheet } from "react-native";
+import { useLocalSearchParams, router } from "expo-router"; // Usar 'useSearchParams' conforme indicado
 import { Ionicons } from "@expo/vector-icons";
-import { router } from "expo-router";
 import { MaterialIcons } from "@expo/vector-icons";
+import { useCart } from "../../../contexts/CartContext";
 
 type Product = {
   id: string;
@@ -129,8 +122,10 @@ const products: Product[] = [
   },
 ];
 
-const ProductDetailScreen: React.FC = () => {
+const ProductDetailScreen = () => {
   const [quantity, setQuantity] = useState(1);
+
+  const { addToCart } = useCart(); // Função para adicionar ao carrinho
 
   // Função para converter o preço de string para número
   const extractPrice = (priceText: string): number => {
@@ -159,10 +154,35 @@ const ProductDetailScreen: React.FC = () => {
     return <Text>Produto não encontrado</Text>;
   }
 
-  const price = extractPrice(product.price);
+  // Extrai o preço do produto e calcula o total
+  const price = extractPrice(product.price || "0");
+  const total = price * quantity;
 
-  const total = (price * quantity).toFixed(2);
+  const handleAddToCartAndNavigate = () => {
+    // Verifica se o produto está definido
+    if (!product) {
+      console.error("Produto não encontrado");
+      return;
+    }
 
+    // Cria o objeto cartItem
+    const cartItem = {
+      product: {
+        id: product.id, // ID do produto
+        name: product.name, // Nome do produto
+        image: product.image, // Imagem do produto
+        price: product.price, // Preço do produto
+      },
+      quantity: quantity, // Quantidade selecionada
+      totalPrice: total, // Preço total (preço * quantidade)
+    };
+
+    // Adiciona o item ao carrinho usando a função do contexto
+    addToCart(product, quantity, total);
+
+    // Navega para a página do carrinho
+    router.push("/pages/orders/cart");
+  };
   return (
     <View style={styles.container}>
       <Image
@@ -173,18 +193,12 @@ const ProductDetailScreen: React.FC = () => {
           borderRadius: 100,
         }}
       />
-
       <View style={styles.containerproduto}>
-        {/*Nome do Produto*/}
         <Text style={styles.textoproduto}>{product.name}</Text>
-
-        {/*Valor do Produto*/}
         <Text className="text-xl font-bold mt-5 mb-3 text-gray-900">
-          R$ {total ?? "0,00"}
+          R$ {total.toFixed(2)}
         </Text>
-
         <View style={styles.quantityContainer}>
-          {/*Botão de decrementar qtde*/}
           <TouchableOpacity
             onPress={decrementQuantity}
             style={styles.buttonquantity}
@@ -194,7 +208,6 @@ const ProductDetailScreen: React.FC = () => {
 
           <Text style={styles.quantity}>{quantity}</Text>
 
-          {/*Botão de acrescentar qtde*/}
           <TouchableOpacity
             onPress={incrementQuantity}
             style={styles.buttonquantity}
@@ -202,14 +215,11 @@ const ProductDetailScreen: React.FC = () => {
             <MaterialIcons name="add" size={24} color="#fff" />
           </TouchableOpacity>
         </View>
-        {/* Adicione mais detalhes do produto aqui */}
 
-        {/*Botao Add Carrinho*/}
         <TouchableOpacity
           style={styles.button}
           onPress={() => {
-            // Ação ao clicar no botão
-            handleNavigateCart();
+            handleAddToCartAndNavigate(); // Navega para a página do carrinho
           }}
         >
           <Text

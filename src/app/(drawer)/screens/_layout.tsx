@@ -10,6 +10,10 @@ export default function Layout() {
     router.push("/pages/orders/cart");
   }
 
+  function handleNavigateEmployee_Customer() {
+    router.push("");
+  }
+
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
       <Drawer
@@ -39,14 +43,14 @@ export default function Layout() {
         />
 
         <Drawer.Screen
-          name="product_screen" // Certifique-se de que este caminho está correto e corresponde ao que você deseja.
+          name="employee_customer" // Certifique-se de que este caminho está correto e corresponde ao que você deseja.
           options={{
-            drawerLabel: "Vendas",
+            drawerLabel: "Vendas / Funcionário / Cliente",
             title: "",
 
             drawerIcon: ({ focused, size }) => (
               <MaterialIcons
-                name="shopping-cart" // Nome do ícone do Material Icons
+                name="people" // Nome do ícone do Material Icons
                 size={size} // Tamanho do ícone
                 color={focused ? "#2196f3" : "#000"} // Cor do ícone dependendo do foco
               />
@@ -83,20 +87,10 @@ export default function Layout() {
             ),
           }}
         />
-
         <Drawer.Screen
-          name="productdetail" // Certifique-se de que este caminho está correto e corresponde ao que você deseja.
+          name="productdetail"
           options={{
-            drawerLabel: "Vendas - Carrinho",
-            title: "",
-
-            drawerIcon: ({ focused, size }) => (
-              <MaterialIcons
-                name="shopping-cart" // Nome do ícone do Material Icons
-                size={size} // Tamanho do ícone
-                color={focused ? "#60a5fa" : "#000"} // Cor do ícone dependendo do foco
-              />
-            ),
+            drawerItemStyle: { display: "none" }, // Oculta do menu
           }}
         />
       </Drawer>
