@@ -18,6 +18,9 @@ type CartItem = {
 type CartContextType = {
   cart: CartItem[];
   addToCart: (product: Product, quantity: number, totalPrice: number) => void;
+  clearCart: () => void; // Adiciona a função de limpar o carrinho
+  updateCartItemQuantity: (productId: string, newQuantity: number) => void;
+  removeCartItem: (productId: string) => void;
 };
 
 const CartContext = createContext<CartContextType | undefined>(undefined);
@@ -60,8 +63,37 @@ export const CartProvider: React.FC<{ children: ReactNode }> = ({
     });
   };
 
+  // Função para limpar o carrinho
+  const clearCart = () => {
+    setCart([]);
+  };
+
+  const updateCartItemQuantity = (productId: string, newQuantity: number) => {
+    setCart((prevCart) =>
+      prevCart.map((item) =>
+        item.product.id === productId
+          ? { ...item, quantity: newQuantity }
+          : item
+      )
+    );
+  };
+
+  const removeCartItem = (productId: string) => {
+    setCart((prevCart) =>
+      prevCart.filter((item) => item.product.id !== productId)
+    );
+  };
+
   return (
-    <CartContext.Provider value={{ cart, addToCart }}>
+    <CartContext.Provider
+      value={{
+        cart,
+        addToCart,
+        clearCart,
+        updateCartItemQuantity,
+        removeCartItem,
+      }}
+    >
       {children}
     </CartContext.Provider>
   );

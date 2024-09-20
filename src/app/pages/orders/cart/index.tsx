@@ -79,7 +79,7 @@ const products = [
 const CartItens: React.FC = () => {
   const router = useRouter();
 
-  const { cart } = useCart(); // Acessa o carrinho pelo contexto
+  const { cart, updateCartItemQuantity, removeCartItem } = useCart(); // Acessa o carrinho pelo contexto
 
   // Define o tipo de 'quantities' como um objeto onde a chave é o productId e o valor é a quantidade.
   const [quantities, setQuantities] = useState<{ [key: string]: number }>(
@@ -91,16 +91,39 @@ const CartItens: React.FC = () => {
     }
   );
 
+  const handleRemoveItem = (productId: string) => {
+    // Remover o item do contexto
+    removeCartItem(productId);
+
+    // Atualizar o estado local para refletir a mudança
+    setQuantities((prevQuantities) => {
+      const updatedQuantities = { ...prevQuantities };
+      delete updatedQuantities[productId]; // Remover o item do estado local
+      return updatedQuantities;
+    });
+  };
+
   const handleIncreaseQuantity = (productId: string) => {
-    setQuantities((prevQuantities) => ({
-      ...prevQuantities,
-      [productId]: (prevQuantities[productId] || 0) + 1,
-    }));
+    setQuantities((prevQuantities) => {
+      const newQuantity = (prevQuantities[productId] || 0) + 1;
+
+      // Atualize o contexto global
+      updateCartItemQuantity(productId, newQuantity);
+
+      return {
+        ...prevQuantities,
+        [productId]: newQuantity,
+      };
+    });
   };
 
   const handleDecreaseQuantity = (productId: string) => {
     setQuantities((prevQuantities) => {
       const newQuantity = (prevQuantities[productId] || 1) - 1;
+
+      // Atualize o contexto global
+      updateCartItemQuantity(productId, newQuantity > 0 ? newQuantity : 1);
+
       return {
         ...prevQuantities,
         [productId]: newQuantity > 0 ? newQuantity : 1,
@@ -122,14 +145,6 @@ const CartItens: React.FC = () => {
       // Adiciona uma verificação para assegurar que o preço é válido
       const isPriceValid = !isNaN(price) && price > 0;
       const totalPrice = isPriceValid ? (price * quantity).toFixed(2) : "0.00";
-
-      // Adiciona logs para verificar os valores
-      /* console.log("Product ID:", item.product.id);
-      console.log("Quantity:", quantity);
-      console.log("Price String:", item.product.price);
-      console.log("Clean Price String:", cleanPriceString);
-      console.log("Price:", price);
-      console.log("Total Price:", totalPrice);*/
 
       return (
         <View style={styles.card}>
@@ -157,6 +172,13 @@ const CartItens: React.FC = () => {
                 style={styles.quantityButton}
               >
                 <Ionicons name="add-circle-outline" size={24} color="#333" />
+              </TouchableOpacity>
+
+              <TouchableOpacity
+                onPress={() => handleRemoveItem(item.product.id)}
+                style={styles.removeButton}
+              >
+                <Ionicons name="trash-outline" size={24} color="red" />
               </TouchableOpacity>
             </View>
           </View>
@@ -201,6 +223,11 @@ const styles = StyleSheet.create({
     height: 50,
     width: 350,
     marginTop: 70,
+  },
+  removeButton: {
+    marginLeft: 10, // Espaçamento à esquerda do botão
+    backgroundColor: "transparent", // Para garantir que o fundo seja transparente
+    padding: 5, // Um pouco de preenchimento para tornar o botão clicável
   },
   icon: {
     position: "absolute",
@@ -256,7 +283,7 @@ const styles = StyleSheet.create({
   productPrice: {
     fontSize: 16,
     fontWeight: "bold",
-    color: "#5348e7",
+    color: "#4160e7",
   },
   listContainer: {
     paddingBottom: 20,

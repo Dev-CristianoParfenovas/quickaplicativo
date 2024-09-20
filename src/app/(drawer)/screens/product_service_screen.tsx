@@ -1,4 +1,5 @@
-import React, { useState, useContext } from "react";
+import React, { useState, useCallback } from "react";
+import { useFocusEffect } from "@react-navigation/native";
 import {
   View,
   Text,
@@ -9,7 +10,7 @@ import {
   StyleSheet,
 } from "react-native";
 import { useRouter } from "expo-router";
-import { Picker } from "@react-native-picker/picker";
+import { useCart } from "../../contexts/CartContext";
 
 interface Category {
   id: string;
@@ -100,6 +101,20 @@ const categories: Category[] = [
 const ProductServiceScreen: React.FC = () => {
   // Estado para armazenar o item selecionado, começa com o primeiro item
   const [selectedCategory, setSelectedCategory] = useState<string>("1");
+
+  const { cart } = useCart(); // Acesse os itens do carrinho a partir do contexto
+
+  // Função para calcular o total de itens no carrinho
+  const getTotalItems = () => {
+    return cart.reduce((sum, item) => sum + item.quantity, 0); // Soma todas as quantidades
+  };
+
+  useFocusEffect(
+    useCallback(() => {
+      // Recalcula o total de itens ao focar na tela
+      getTotalItems();
+    }, [cart])
+  );
 
   // Função para renderizar cada item do FlatList
   const renderItem = ({ item }: { item: { id: string; name: string } }) => (

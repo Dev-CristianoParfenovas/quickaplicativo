@@ -1,11 +1,28 @@
-import React from "react";
+import React, { useCallback } from "react";
+import { useFocusEffect } from "@react-navigation/native";
 import { Text, TouchableOpacity, View, StyleSheet } from "react-native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { Drawer } from "expo-router/drawer";
 import { MaterialIcons } from "@expo/vector-icons";
 import { router } from "expo-router";
+import { useCart } from "../../contexts/CartContext";
 
 export default function Layout() {
+  const { cart } = useCart(); // Acesse os itens do carrinho a partir do contexto
+
+  // Função para calcular o total de itens no carrinho
+  const getTotalItems = () => {
+    return cart.reduce((sum, item) => sum + item.quantity, 0); // Soma todas as quantidades
+  };
+
+  // Atualiza quando a tela ganha foco (quando o usuário retorna da tela de carrinho, por exemplo)
+  useFocusEffect(
+    useCallback(() => {
+      // Aqui você pode chamar qualquer função necessária para atualizar o estado
+      getTotalItems();
+    }, [cart])
+  );
+
   function handleNavigateCart() {
     router.push("/pages/orders/cart");
   }
@@ -80,7 +97,7 @@ export default function Layout() {
                 style={{ marginRight: 10 }}
               >
                 <View style={style.textcar}>
-                  <Text>8</Text>
+                  <Text> {getTotalItems()}</Text>
                 </View>
                 <MaterialIcons name="shopping-cart" size={25} color="#000" />
               </TouchableOpacity>
