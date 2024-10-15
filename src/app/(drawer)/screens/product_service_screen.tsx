@@ -1,16 +1,16 @@
-import React, { useState, useCallback } from "react";
+import React, { useState, useCallback, useEffect } from "react";
 import { useFocusEffect } from "@react-navigation/native";
 import {
   View,
   Text,
   TouchableOpacity,
   FlatList,
-  ListRenderItem,
   Image,
   StyleSheet,
 } from "react-native";
-import { useRouter } from "expo-router";
+import { useRouter, useLocalSearchParams } from "expo-router";
 import { useCart } from "../../contexts/CartContext";
+import { useEmployeeCustomer } from "../../contexts/EmployeeCustomerContext";
 
 interface Category {
   id: string;
@@ -99,48 +99,71 @@ const categories: Category[] = [
 ];
 
 const ProductServiceScreen: React.FC = () => {
-  // Estado para armazenar o item selecionado, começa com o primeiro item
   const [selectedCategory, setSelectedCategory] = useState<string>("1");
 
   const { cart } = useCart(); // Acesse os itens do carrinho a partir do contexto
+  const { employee, customer, setEmployee, setCustomer } =
+    useEmployeeCustomer(); //useLocalSearchParams(); //useLocalSearchParams(); // Pega os parâmetros passados pela navegação
 
-  // Função para calcular o total de itens no carrinho
+  const router = useRouter();
+
+  const params = useLocalSearchParams(); // Captura os parâmetros passados pela navegação
+
+  // Atualiza o contexto com os parâmetros recebidos
+  useFocusEffect(
+    useCallback(() => {
+      if (params.employee && params.customer) {
+        setEmployee(params.employee as string);
+        setCustomer(params.customer as string);
+      } else {
+        console.log("Parâmetros recebidos: ", params);
+      }
+    }, [params, setEmployee, setCustomer])
+  );
+
+  useEffect(() => {
+    // Para garantir que você está sempre trabalhando com valores atualizados
+    console.log("Funcionário:", employee);
+    console.log("Cliente:", customer);
+  }, [employee, customer]);
+
   const getTotalItems = () => {
-    return cart.reduce((sum, item) => sum + item.quantity, 0); // Soma todas as quantidades
+    return cart.reduce((sum, item) => sum + item.quantity, 0);
   };
 
   useFocusEffect(
     useCallback(() => {
-      // Recalcula o total de itens ao focar na tela
       getTotalItems();
     }, [cart])
   );
 
-  // Função para renderizar cada item do FlatList
   const renderItem = ({ item }: { item: { id: string; name: string } }) => (
     <TouchableOpacity
       style={[
         style.categoryItem,
         {
           backgroundColor: selectedCategory === item.id ? "#60a5fa" : "#f0f0f0",
-        }, // Muda o fundo se o item estiver selecionado
+        },
       ]}
-      onPress={() => setSelectedCategory(item.id)} // Atualiza o estado ao clicar
+      onPress={() => setSelectedCategory(item.id)}
     >
       <Text
         style={[
           style.categoryText,
-          { color: selectedCategory === item.id ? "#fff" : "#000" }, // Altera a cor do texto com base na seleção
+          { color: selectedCategory === item.id ? "#fff" : "#000" },
         ]}
       >
         {item.name}
       </Text>
     </TouchableOpacity>
   );
-  const router = useRouter();
 
-  const handlePress = (id: String) => {
-    router.push(`/pages/products/products_detail_screen/${id}`);
+  const handlePress = (id: string) => {
+    console.log(employee, customer);
+    router.push({
+      pathname: `../../pages/products/products_detail_screen/${id}`,
+      params: { employee, customer }, // Passando os parâmetros
+    });
   };
 
   const renderProduct = ({ item }: { item: Product }) => (
@@ -166,21 +189,27 @@ const ProductServiceScreen: React.FC = () => {
 
   return (
     <View className="flex-1 justify-start  p-4  bg-gray-100">
+      {/* Exibe os nomes do funcionário e do cliente */}
+      <Text style={style.title} numberOfLines={1}>
+        {employee && `Funcionário: ${employee}`}
+        {employee && customer ? " | " : ""}{" "}
+        {/* Exibe o separador " | " apenas se ambos existirem */}
+        {customer && `Cliente: ${customer}`}
+      </Text>
+
       <View style={style.containercategory}>
         <Text style={style.title}>Categoria:</Text>
         <FlatList
-          //LISTA AS CATEGORIAS
           data={categories}
           renderItem={renderItem}
           keyExtractor={(item) => item.id}
           horizontal={true}
-          showsHorizontalScrollIndicator={false} // Oculta a barra de rolagem
+          showsHorizontalScrollIndicator={false}
           contentContainerStyle={style.flatListContent}
         />
       </View>
 
       <FlatList
-        //LISTA OS PRODUTOS
         data={products}
         renderItem={renderProduct}
         keyExtractor={(item) => item.id}

@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import {
   View,
   Text,
@@ -8,8 +8,10 @@ import {
   StyleSheet,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
-import { useRouter } from "expo-router";
+import { useRouter, useLocalSearchParams } from "expo-router";
 import { useCart } from "../../../contexts/CartContext";
+import { useEmployeeCustomer } from "@/src/app/contexts/EmployeeCustomerContext";
+import { useFocusEffect } from "@react-navigation/native";
 
 type CartItem = {
   product: {
@@ -77,7 +79,30 @@ const products = [
 ];
 
 const CartItens: React.FC = () => {
+  const { employee, customer, setEmployee, setCustomer } =
+    useEmployeeCustomer(); // Pega os parâmetros passados pela navegação
+
   const router = useRouter();
+
+  const params = useLocalSearchParams(); // Captura os parâmetros passados pela navegação
+
+  // Atualiza o contexto com os parâmetros recebidos
+  useFocusEffect(
+    useCallback(() => {
+      if (params.employee && params.customer) {
+        setEmployee(params.employee as string);
+        setCustomer(params.customer as string);
+      } else {
+        console.log("Parâmetros recebidos: ", params);
+      }
+    }, [params, setEmployee, setCustomer])
+  );
+
+  useEffect(() => {
+    // Para garantir que você está sempre trabalhando com valores atualizados
+    console.log("Funcionário:", employee);
+    console.log("Cliente:", customer);
+  }, [employee, customer]);
 
   const { cart, updateCartItemQuantity, removeCartItem } = useCart(); // Acessa o carrinho pelo contexto
 
@@ -188,12 +213,37 @@ const CartItens: React.FC = () => {
     [quantities]
   );
 
-  const handlePress = (id: String) => {
-    router.push(`/pages/products/products_detail_screen/${id}`);
+  // Função para navegar para a tela de checkout
+  const handleNavigateProducts = () => {
+    router.push({
+      pathname: "../../../screens/product_service_screen",
+      params: { employee: employee, customer: customer },
+    });
+  };
+
+  const handleNavigatePayment = () => {
+    router.push("../../../pages/orders/pay");
   };
 
   return (
     <View className="flex-1 justify-start items-center p-4 bg-gray-100">
+      <View style={styles.topo}>
+        <TouchableOpacity
+          style={styles.btn}
+          onPress={() => {
+            handleNavigateProducts();
+          }}
+        >
+          <Ionicons name="arrow-back-circle" size={25} color="#000" />
+        </TouchableOpacity>
+        <Text style={styles.textoec} numberOfLines={1}>
+          {employee && `Funcionário: ${employee}`}
+          {employee && customer ? " | " : ""}{" "}
+          {/* Exibe o separador " | " apenas se ambos existirem */}
+          {customer && `Cliente: ${customer}`}
+        </Text>
+      </View>
+
       <FlatList
         data={cart}
         renderItem={renderCartItem}
@@ -202,7 +252,12 @@ const CartItens: React.FC = () => {
         contentContainerStyle={styles.listContainer}
         showsVerticalScrollIndicator={false}
       />
-      <TouchableOpacity style={styles.button} onPress={() => {}}>
+      <TouchableOpacity
+        style={styles.button}
+        onPress={() => {
+          handleNavigatePayment();
+        }}
+      >
         <Text style={{ color: "white", fontSize: 16, marginRight: 10 }}>
           Finalizar a compra
         </Text>
@@ -304,6 +359,18 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: "bold",
     marginHorizontal: 10,
+  },
+  btn: {
+    flexDirection: "row",
+    paddingRight: 8,
+  },
+  topo: {
+    flexDirection: "row",
+    padding: 8,
+  },
+  textoec: {
+    fontSize: 15,
+    fontWeight: "bold",
   },
 });
 

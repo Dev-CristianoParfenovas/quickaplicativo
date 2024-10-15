@@ -14,7 +14,7 @@ import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view
 import { useForm, Controller } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
-import Input from "@/src/input";
+import Input from "@/src/components/input";
 
 const schema = yup.object({
   email: yup.string().email("Email inválido").required("Informe seu email!!"),

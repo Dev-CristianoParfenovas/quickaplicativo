@@ -1,9 +1,11 @@
-import React, { useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { View, Text, Image, TouchableOpacity, StyleSheet } from "react-native";
-import { useLocalSearchParams, router } from "expo-router"; // Usar 'useSearchParams' conforme indicado
+import { router, useLocalSearchParams } from "expo-router"; // Usar 'useSearchParams' conforme indicado
 import { Ionicons } from "@expo/vector-icons";
 import { MaterialIcons } from "@expo/vector-icons";
 import { useCart } from "../../../contexts/CartContext";
+import { useEmployeeCustomer } from "@/src/app/contexts/EmployeeCustomerContext";
+import { useFocusEffect } from "@react-navigation/native";
 
 type Product = {
   id: string;
@@ -127,6 +129,31 @@ const ProductDetailScreen = () => {
 
   const { addToCart } = useCart(); // Função para adicionar ao carrinho
 
+  const { employee, customer, setEmployee, setCustomer } =
+    useEmployeeCustomer(); //useLocalSearchParams(); //useLocalSearchParams(); // Pega os parâmetros passados pela navegação
+
+  //const router = useRouter();
+
+  const params = useLocalSearchParams(); // Captura os parâmetros passados pela navegação
+
+  // Atualiza o contexto com os parâmetros recebidos
+  useFocusEffect(
+    useCallback(() => {
+      if (params.employee && params.customer) {
+        setEmployee(params.employee as string);
+        setCustomer(params.customer as string);
+      } else {
+        console.log("Parâmetros recebidos: ", params);
+      }
+    }, [params, setEmployee, setCustomer])
+  );
+
+  useEffect(() => {
+    // Para garantir que você está sempre trabalhando com valores atualizados
+    console.log("Funcionário:", employee);
+    console.log("Cliente:", customer);
+  }, [employee, customer]);
+
   // Função para converter o preço de string para número
   const extractPrice = (priceText: string): number => {
     return parseFloat(priceText.replace("R$", "").replace(",", "."));
@@ -142,12 +169,8 @@ const ProductDetailScreen = () => {
     }
   };
 
-  function handleNavigateCart() {
-    router.push("/pages/orders/cart");
-  }
-
   const { id } = useLocalSearchParams(); // Acessar parâmetros usando 'useSearchParams'
-
+  // const { employee, customer } = useEmployeeCustomer(); //useLocalSearchParams();
   const product = products.find((p) => p.id === id);
 
   if (!product) {
@@ -180,11 +203,15 @@ const ProductDetailScreen = () => {
     // Adiciona o item ao carrinho usando a função do contexto
     addToCart(product, quantity, total);
 
-    // Navega para a página do carrinho
-    router.push("/pages/orders/cart");
+    // Navega para a página do carrinho passando também employeeName e customerName
+    router.push({
+      pathname: "/pages/orders/cart", //"pages/orders/cart",
+      params: { employee: employee, customer: customer }, // Passando os parâmetros
+    });
   };
   return (
     <View style={styles.container}>
+      <View></View>
       <Image
         source={{ uri: product.image }}
         style={{
@@ -193,6 +220,7 @@ const ProductDetailScreen = () => {
           borderRadius: 100,
         }}
       />
+
       <View style={styles.containerproduto}>
         <Text style={styles.textoproduto}>{product.name}</Text>
         <Text className="text-xl font-bold mt-5 mb-3 text-gray-900">
@@ -214,6 +242,16 @@ const ProductDetailScreen = () => {
           >
             <MaterialIcons name="add" size={24} color="#fff" />
           </TouchableOpacity>
+        </View>
+
+        <View>
+          <Text numberOfLines={1}>
+            {" "}
+            {employee && `Funcionário: ${employee}`}
+            {employee && customer ? " | " : ""}{" "}
+            {/* Exibe o separador " | " apenas se ambos existirem */}
+            {customer && `Cliente: ${customer}`}
+          </Text>
         </View>
 
         <TouchableOpacity

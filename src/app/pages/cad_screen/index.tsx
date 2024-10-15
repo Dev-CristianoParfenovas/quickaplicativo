@@ -14,7 +14,7 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 import { Picker } from "@react-native-picker/picker";
 import { Ionicons, MaterialIcons } from "@expo/vector-icons";
-import Input from "@/src/input";
+import Input from "@/src/components/input";
 
 const schema = yup.object({
   username: yup.string().required("Informe seu nome!!"),

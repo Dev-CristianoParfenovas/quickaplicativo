@@ -4,11 +4,28 @@ import { Text, TouchableOpacity, View, StyleSheet } from "react-native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { Drawer } from "expo-router/drawer";
 import { MaterialIcons } from "@expo/vector-icons";
-import { router } from "expo-router";
+import { router, useLocalSearchParams, useRouter } from "expo-router";
 import { useCart } from "../../contexts/CartContext";
+import {
+  EmployeeCustomerProvider,
+  useEmployeeCustomer,
+} from "../../contexts/EmployeeCustomerContext";
 
 export default function Layout() {
   const { cart } = useCart(); // Acesse os itens do carrinho a partir do contexto
+  const { employee, customer, setEmployee, setCustomer } =
+    useEmployeeCustomer();
+
+  const params = useLocalSearchParams();
+  // Atualiza o contexto com os parâmetros recebidos
+  useFocusEffect(
+    useCallback(() => {
+      if (params.employee && params.customer) {
+        setEmployee(params.employee as string);
+        setCustomer(params.customer as string);
+      }
+    }, [params, setEmployee, setCustomer])
+  );
 
   // Função para calcular o total de itens no carrinho
   const getTotalItems = () => {
@@ -23,13 +40,13 @@ export default function Layout() {
     }, [cart])
   );
 
-  function handleNavigateCart() {
-    router.push("/pages/orders/cart");
-  }
-
-  function handleNavigateEmployee_Customer() {
-    router.push("");
-  }
+  // Função para navegar para o carrinho com os parâmetros
+  const handleNavigateCart = () => {
+    router.push({
+      pathname: "/pages/orders/cart", //"pages/orders/cart",
+      params: { employee: employee, customer: customer }, // Passando os parâmetros
+    });
+  };
 
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
