@@ -1,15 +1,7 @@
 import React, { useState } from "react";
-import {
-  View,
-  TextInput,
-  SafeAreaView,
-  TouchableOpacity,
-  Text,
-  StyleSheet,
-  Image,
-} from "react-native";
+import { View, TouchableOpacity, Text, StyleSheet, Image } from "react-native";
 import { router } from "expo-router";
-import { Ionicons, MaterialIcons, Octicons } from "@expo/vector-icons";
+import { Ionicons, MaterialIcons } from "@expo/vector-icons";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import { useForm, Controller } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";

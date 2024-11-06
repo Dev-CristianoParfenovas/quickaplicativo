@@ -121,10 +121,28 @@ export default function Layout() {
             ),
           }}
         />
+
+        <Drawer.Screen
+          name="cad_clients"
+          options={{
+            drawerLabel: "Cadastro",
+            title: "Cadastro",
+            drawerIcon: ({ focused, size }) => (
+              <MaterialIcons
+                name="people" // Nome do ícone do Material Icons
+                size={size} // Tamanho do ícone
+                color={focused ? "#2196f3" : "#000"} // Cor do ícone dependendo do foco
+              />
+            ),
+          }}
+        />
+
         <Drawer.Screen
           name="productdetail"
           options={{
-            drawerItemStyle: { display: "none" }, // Oculta do menu
+            drawerLabel: "",
+            title: "",
+            drawerItemStyle: { display: "none" }, // Oculta do menu Drawer
           }}
         />
       </Drawer>
