@@ -23,12 +23,25 @@ const schema = yup.object({
     .string()
     .min(6, "A senha deve ter pelo menos 6 digitos")
     .required("Informe sua senha!!"),
+
+  phone: yup
+    .string()
+    .matches(/^\d{10,11}$/, "Informe um telefone válido")
+    .required("Informe seu telefone!!"),
 });
 
 type TipoEmpresaProps = {
   id: string;
   name: string;
 };
+
+function maskPhone(value: string): string {
+  return value
+    .replace(/\D/g, "") // Remove todos os caracteres não numéricos
+    .replace(/^(\d{2})(\d)/, "($1) $2") // Adiciona parênteses em volta do DDD
+    .replace(/(\d{5})(\d)/, "$1-$2") // Adiciona o hífen depois do quinto dígito
+    .replace(/(-\d{4})\d+?$/, "$1"); // Limita o número de caracteres
+}
 
 const CadScreen = () => {
   const [tipoEmpresa, setTipoEmpresa] = useState<TipoEmpresaProps[] | []>([]);
@@ -101,6 +114,25 @@ const CadScreen = () => {
         />
         {errors.username && (
           <Text style={styles.labelError}>{errors.username?.message}</Text>
+        )}
+
+        <Controller // Campo de Telefone com máscara
+          control={control}
+          name="phone"
+          render={({ field: { onChange, onBlur, value } }) => (
+            <Input
+              title="Digite seu telefone"
+              keyboardType="phone-pad"
+              IconLeft={MaterialIcons}
+              IconLeftName="phone"
+              onBlur={onBlur}
+              value={value}
+              onChangeText={(text) => onChange(maskPhone(text))} // Aplica a máscara
+            />
+          )}
+        />
+        {errors.email && (
+          <Text style={styles.labelError}>{errors.phone?.message}</Text>
         )}
 
         <Controller //EMAIL

@@ -125,7 +125,7 @@ export default function Layout() {
         <Drawer.Screen
           name="cad_clients"
           options={{
-            drawerLabel: "Cadastro",
+            drawerLabel: "Cadastrar Clientes",
             title: "Cadastro",
             drawerIcon: ({ focused, size }) => (
               <MaterialIcons
