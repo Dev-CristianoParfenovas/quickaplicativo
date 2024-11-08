@@ -30,11 +30,6 @@ const schema = yup.object({
     .required("Informe seu telefone!!"),
 });
 
-type TipoEmpresaProps = {
-  id: string;
-  name: string;
-};
-
 function maskPhone(value: string): string {
   return value
     .replace(/\D/g, "") // Remove todos os caracteres não numéricos
@@ -44,8 +39,7 @@ function maskPhone(value: string): string {
 }
 
 const CadScreen = () => {
-  const [tipoEmpresa, setTipoEmpresa] = useState<TipoEmpresaProps[] | []>([]);
-  // const [empresaSelected, setEmpresaSelected] = useState<TipoEmpresaProps>();
+  const [isAdmin, setIsAdmin] = useState(false); // Estado para o tipo de usuário
   const [hidePass, setHidePass] = useState(true);
   const router = useRouter();
 
@@ -77,16 +71,16 @@ const CadScreen = () => {
         contentContainerStyle={styles.container}
         showsVerticalScrollIndicator={false}
       >
-        <Text style={styles.label}>Tipo de Empresa:</Text>
+        <Text style={styles.label}>Tipo de Usuário:</Text>
         <View style={styles.pickerContainer}>
           <Picker
-            selectedValue={tipoEmpresa}
+            selectedValue={isAdmin ? "true" : "false"} // Convert boolean to string for Picker
             style={styles.picker}
-            onValueChange={(itemValue) => setTipoEmpresa(itemValue)}
+            onValueChange={(value) => setIsAdmin(value === "true")} // Convert string to boolean
           >
-            <Picker.Item label="Selecione o tipo de empresa" value="" />
-            <Picker.Item label="E-commerce" value="ecommerce" />
-            <Picker.Item label="Serviços" value="servicos" />
+            <Picker.Item label="Selecione o tipo de usuário" value="" />
+            <Picker.Item label="Administrador" value="true" />
+            <Picker.Item label="Funcionário" value="false" />
           </Picker>
         </View>
 
@@ -99,13 +93,6 @@ const CadScreen = () => {
               keyboardType="default"
               IconLeft={MaterialIcons}
               IconLeftName="people"
-              /* style={[
-                styles.input,
-                {
-                  borderWidth: errors.email && 1,
-                  borderColor: errors.email && "#ff375b",
-                },
-              ]}*/
               onBlur={onBlur} //chamado qdo. o textinput é focado
               value={value}
               onChangeText={onChange}

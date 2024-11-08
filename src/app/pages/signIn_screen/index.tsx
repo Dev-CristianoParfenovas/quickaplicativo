@@ -7,6 +7,7 @@ import { useForm, Controller } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 import Input from "@/src/components/input";
+import api from "../../constants/api";
 
 const schema = yup.object({
   email: yup.string().email("Email inválido").required("Informe seu email!!"),
@@ -18,6 +19,13 @@ const schema = yup.object({
 
 const SignIn = () => {
   const [hidePass, setHidePass] = useState(true);
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+
+  function ExecuteLogin() {
+    try {
+    } catch (error) {}
+  }
 
   const {
     control,
@@ -64,15 +72,12 @@ const SignIn = () => {
                 keyboardType="email-address"
                 IconLeft={MaterialIcons}
                 IconLeftName="email"
-                /* style={[
-                  {
-                    borderWidth: errors.email && 1,
-                    borderColor: errors.email && "#ff375b",
-                  },
-                ]}*/
                 onBlur={onBlur} //chamado qdo. o textinput é focado
                 value={value}
-                onChangeText={onChange}
+                onChangeText={(text) => {
+                  onChange(text); // Atualiza o valor do Controller
+                  setEmail(text); // Atualiza o estado local
+                }}
               />
             )}
           />
@@ -91,16 +96,12 @@ const SignIn = () => {
                 secureTextEntry={hidePass}
                 IconLeftName={hidePass ? "eye-off" : "eye"}
                 onIconLeftPress={() => setHidePass(!hidePass)}
-                /* style={[
-                  styles.input,
-                  {
-                    borderWidth: errors.email && 1,
-                    borderColor: errors.email && "#ff375b",
-                  },
-                ]}*/
                 onBlur={onBlur} //chamado qdo. o textinput é focado
                 value={value}
-                onChangeText={onChange}
+                onChangeText={(text) => {
+                  onChange(text); // Atualiza o valor do Controller
+                  setPassword(text); // Atualiza o estado local
+                }}
               />
             )}
           />
